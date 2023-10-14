@@ -19,7 +19,7 @@ from django.urls import path,include
 from teams.views import *
 
 urlpatterns = [
-    path('teams/', teams),
+    path('', home),
     path('delete-player/<id>/', delete_players,),
     path('admin/', admin.site.urls),
     path('',include('teams.urls'))

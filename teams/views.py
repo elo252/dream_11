@@ -8,26 +8,14 @@ from .serializers import PlayerSerializer , TeamSerializer
 from rest_framework import generics
 from .forms import TeamForm,PlayerForm
 
-from .helper import combinations_creator,create_df
+from .helper import combinations_creator,create_df, input_players,create_df_input,fixed_structure , unfixed_structure
 
 
 # Create your views here.
-def teams(request):
-    if request.method == "POST":
-        data = request.POST
-        name = data.get('name')
-        team = data.get('team')
-        points = float(data.get('points', 0))  # Assuming points can be a float
-        position = data.get('position')
+def home(request):
 
-        # Create a new Player instance using Player.objects.create()
-        Player.objects.create(name=name, team=team, points=points, position=position)
-        return redirect('teams')
-    
-    queryset = Player.objects.all()
-    context = {'players': queryset}
 
-    return render(request, "index.html", context)
+    return render(request, "index.html",)
 
 def delete_players(request,id):
     queryset= Player.objects.get(id=id)
@@ -102,8 +90,13 @@ def create_player(request):
     return render(request, 'players.html',context) 
 
 
-def udpate_team():
-    pass
+def udpate_team(request,pk):
+    #print(pk)
+    team = Team.objects.get(id=pk)
+    players = team.players.all()
+    teamform = TeamForm(instance = team)
+    context = {"teamform":teamform, "players":players }
+    return render(request , "update.html" ,context)
 
 
 
@@ -115,18 +108,63 @@ def matchday(request):
         selected_team_id_1 = request.POST['team1']
         selected_team_1 = Team.objects.get(id=selected_team_id_1)
         players_list1= selected_team_1.players.all()
-        pair1 = combinations_creator(players_list1)
         selected_team_id_2 = request.POST['team2']
         selected_team_2 = Team.objects.get(id=selected_team_id_2)
         players_list2 = selected_team_2.players.all()
-        pair2 = combinations_creator(players_list2)
-        zz=create_df(players_list1,players_list2)
-        print(zz)
-        combined_players=list(players_list1)+ list(players_list2) 
-        pair3 = combinations_creator(combined_players)
-        context={"teams":teams , "pair1": pair1 , "pair2": pair2 ,"team1":selected_team_1 , "team2": selected_team_2 , "pair3": pair3} 
+        algo_teams_df =create_df(players_list1,players_list2)
+        algo_teams = fixed_structure(algo_teams_df)
+        combined_players=list(players_list1)+ list(players_list2)
+        pair1 = combinations_creator(players_list1,algo_teams) 
+        pair2 = combinations_creator(players_list2,algo_teams)
+        #pair3 = combinations_creator(combined_players,algo_teams)
+        #input_team = input_players()haa
+
+        context={"teams":teams , "pair1": pair1 , "pair2": pair2 ,"team1":selected_team_1 , "team2": selected_team_2 ,  "algo_teams":algo_teams} 
 
         return render(request, 'match.html', context)
 
     return render(request, 'match.html', context)
-       
+
+def matchday_Input(request):
+    teams = Team.objects.all()
+    context={"teams" : teams }
+    players=Player.objects.all()
+    context['players']=players
+    if request.method=="POST":
+        selected_team_id_1 = request.POST['team1']
+        selected_team_1 = Team.objects.get(id=selected_team_id_1)
+        players_list1= selected_team_1.players.all()
+        selected_team_id_2 = request.POST['team2']
+        selected_team_2 = Team.objects.get(id=selected_team_id_2)
+        players_list2 = selected_team_2.players.all()
+        batsman = int(request.POST['batsman'])
+        bowler = int(request.POST['bowler'])
+        wk = int(request.POST['wicketKeeper'])
+        alrou = int(request.POST['allRounder'])
+        algo_teams_input =create_df_input(players_list1,players_list2,batsman,bowler,wk,alrou)
+
+
+        context={"teams":teams ,"team1":selected_team_1 , "team2": selected_team_2 ,  "algo_teams_input":algo_teams_input} 
+
+        return render(request, 'matchday_input.html', context)
+
+    return render(request, 'matchday_input.html', context)
+
+
+
+def unfixed(request):
+    teams=Team.objects.all()
+    context={"teams":teams}
+    if request.method=="POST":
+        team1 =request.POST['team1']
+        selected_team_1 = Team.objects.get(id=team1)
+        players_list1= selected_team_1.players.all()
+        team2=request.POST['team2']
+        selected_team_id_2 = request.POST['team2']
+        selected_team_2 = Team.objects.get(id=selected_team_id_2)
+        players_list2 = selected_team_2.players.all()
+        algo_df = create_df(players_list1,players_list2)
+        algo_teams = unfixed_structure(algo_df)
+        context ={"teams":teams , "algo_teams": algo_teams }
+        return render(request,'unfixed.html',context)
+    return render(request,'unfixed.html',context)

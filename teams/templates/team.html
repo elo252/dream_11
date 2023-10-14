@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
   <title>Team Form</title>
@@ -14,5 +14,66 @@
 
     <button type="submit">Submit</button>
   </form>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Team Form</title>
+  <!-- Bootstrap CSS Link -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    /* Optional custom styles */
+    body {
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Match Day App</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'create_team' %}">Create Team</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'create_player' %}">Create Player</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'match' %}">Match</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'matchday_input' %}">Matchday Input</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'unfixed' %}">Matchday Teams Random</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class="container">
+    <h1 class="mt-5">Team Form</h1>
+    <ul class="list-group mt-4">
+      {% for team in teams %}
+        <li class="list-group-item">{{ team.name }}</li>
+        <a href="{% url 'update' team.id %}" class="btn btn-primary">Update</a>
+      {% endfor %}
+    </ul>
+    <form class="mt-4" action="" method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
+  </div>
+
+  <!-- Bootstrap JS and dependencies (optional) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

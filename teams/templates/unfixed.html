@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Add Bootstrap CSS link -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Match Day Input</title>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Match Day App</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'create_team' %}">Create Team</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'create_player' %}">Create Player</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'match' %}">Match</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'matchday_input' %}">Matchday Input</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'unfixed' %}">Matchday Teams Random</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  
+ <form method="POST" >
+{% csrf_token %}
+  <select name="team1">
+    {% for team in teams %}
+      <option value="{{ team.id }}">{{ team.name }}</option>
+    {% endfor %}
+  </select> 
+<h1> VS </h1>
+  <select name="team2">
+    {% for team in teams %}
+      <option value="{{ team.id }}">{{ team.name }}</option>
+    {% endfor %}
+  </select>
+<button type="submit">Submit</button>
+</form>
+
+<div class="container">
+  <div class="row">
+    {% for team in algo_teams %}
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          <div class="card-header">
+            Team {{ forloop.counter }}
+          </div>
+          <div class="card-body">
+            {% for player in team %}
+              <p class="card-text">{{ player.name }} - {{ player.points }}</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+</body> 
+</html>

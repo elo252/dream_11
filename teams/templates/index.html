@@ -5,103 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Add Bootstrap CSS link -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <title>Create Player</title>
+    <title>HOME</title>
 </head>
 <body>
-    <div class="container mt-5">
-        
-        <form class = 'col-6 mx-auto card p-3 shadow-lg' method="post">
-            {% csrf_token %}
-            <h2 class="text-center">Create Player</h2>
-            <div class="form-group">
-                <label for="name">Name:</label>
-                <input type="text" class="form-control" id="name" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="team">Team:</label>
-                <input type="text" class="form-control" id="team" name="team" required>
-            </div>
-            <div class="form-group">
-                <label for="points">Points:</label>
-                <input type="number" step="0.01" class="form-control" id="points" name="points" required>
-            </div>
-            <div class="form-group">
-                <label for="position">Position:</label>
-                <input type="text" class="form-control" id="position" name="position" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Create Player</button>
-        </form>
-    </div>
-
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">Players List</h2>
-        
-        <!-- Team Search Input -->
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="teamSearch">Search by Team:</label>
-                <input type="text" class="form-control" id="teamSearch" oninput="searchPlayers()" placeholder="Enter team name">
-            </div>
-            <div class="form-group col-md-6">
-                <label for="positionSearch">Search by Position:</label>
-                <input type="text" class="form-control" id="positionSearch" oninput="searchPlayers()" placeholder="Enter position">
-            </div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Match Day App</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'create_team' %}">Create Team</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'create_player' %}">Create Player</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'match' %}">Match</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'matchday_input' %}">Matchday Input</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'unfixed' %}">Matchday Teams Random</a>
+            </li>
+          </ul>
         </div>
-
-        <!-- Players Table -->
-        <table class="table" id="playersTable">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Team</th>
-                    <th>Points</th>
-                    <th>Position</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for player in players %}
-                <tr class="player-row {{ player.team }}">
-                    <td>{{ player.name }}</td>
-                    <td>{{ player.team }}</td>
-                    <td>{{ player.points }}</td>
-                    <td>{{ player.position }}</td>
-                    <td><a href="/delete-player/{{player.id}}" class = "btn btn-danger"> DELETE</a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Add Bootstrap JS and Popper.js scripts (optional) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <script>
-        function searchPlayers() {
-            var teamInput, positionInput, filterTeam, filterPosition, table, tr, td, i, txtValue;
-            teamInput = document.getElementById("teamSearch");
-            positionInput = document.getElementById("positionSearch");
-            filterTeam = teamInput.value.toUpperCase();
-            filterPosition = positionInput.value.toUpperCase();
-            table = document.getElementById("playersTable");
-            tr = table.getElementsByTagName("tr");
-
-            for (i = 0; i < tr.length; i++) {
-                tdTeam = tr[i].getElementsByTagName("td")[1];  // Index 1 corresponds to the Team column
-                tdPosition = tr[i].getElementsByTagName("td")[3];  // Index 3 corresponds to the Position column
-                if (tdTeam && tdPosition) {
-                    txtValueTeam = tdTeam.textContent || tdTeam.innerText;
-                    txtValuePosition = tdPosition.textContent || tdPosition.innerText;
-                    if ((txtValueTeam.toUpperCase().indexOf(filterTeam) > -1) && (txtValuePosition.toUpperCase().indexOf(filterPosition) > -1)) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-    </script>
+      </nav>
+    <h1>WELCOME TO DREAM11</h1>
 </body>
 </html>

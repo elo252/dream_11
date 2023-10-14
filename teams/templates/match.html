@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Match Day </title>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Add Bootstrap CSS link -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Match Day</title>
 </head>
 <body>
-<form method="POST" >
+<!-- <form method="POST" >
 {% csrf_token %}
   <select name="team1">
     {% for team in teams %}
@@ -18,8 +22,57 @@
     {% endfor %}
   </select>
 <button type="submit">Submit</button>
-</form>
-<div> 
+</form> -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Match Day App</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'create_team' %}">Create Team</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'create_player' %}">Create Player</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'match' %}">Match</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'matchday_input' %}">Matchday Input</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'unfixed' %}">Matchday Teams Random</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="container mt-5">
+  <form method="POST" class="form-inline">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="team1">Team 1:</label>
+      <select class="form-control" name="team1" id="team1">
+        {% for team in teams %}
+          <option value="{{ team.id }}">{{ team.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <h1 class="mx-4">VS</h1>
+    <div class="form-group">
+      <label for="team2">Team 2:</label>
+      <select class="form-control" name="team2" id="team2">
+        {% for team in teams %}
+          <option value="{{ team.id }}">{{ team.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary ml-3">Submit</button>
+  </form>
+</div>
+
+<!-- <div> 
 <h3>{{ team1.name }}</h3>
   {% for pair in pair1 %}
     {% for player in pair %}
@@ -46,7 +99,133 @@
     {% endfor %}
     <br>
   {% endfor %}
+</div> -->
+<!-- <div>
+<h3>{{ team2.name }}</h3>
+  {% for pair in pair2 %}
+    {% for player in pair %}
+      {{ player.name }} - 
+    {% endfor %}
+    <br>
+  {% endfor %}
+</div>   -->
+
+<div class="container mt-5">
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <h3> TEAM 1 {{ team1.name }}</h3>
+      {% for pair in pair1 %}
+        <div class="row py-2 player-row">
+          {% for player in pair %}
+            <div class="col font-weight-bold player">{{ player.name }}</div>
+          {% endfor %}
+          <!-- <button class="btn btn-primary show-more-btn">Show More</button>
+          <button class="btn btn-primary show-less-btn">Show Less</button> -->
+        </div>
+        <hr class="border-dark">
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <h3> TEAM 2 {{ team2.name }}</h3>
+      {% for pair in pair2 %}
+        <div class="row py-2 player-row">
+          {% for player in pair %}
+            <div class="col font-weight-bold player">{{ player.name }}</div>
+          {% endfor %}
+          <!-- <button class="btn btn-primary show-more-btn">Show More</button>
+          <button class="btn btn-primary show-less-btn">Show Less</button> -->
+        </div>
+        <hr class="border-dark">
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <h3>MIXED TEAMS{{ team3.name }}</h3>
+      {% for pair in pair3 %}
+        <div class="row py-2 player-row">
+          {% for player in pair %}
+            <div class="col font-weight-bold">{{ player.name }}</div>
+          {% endfor %}
+          <!-- <button class="btn btn-primary show-more-btn">Show More</button>
+          <button class="btn btn-primary show-less-btn">Show Less</button> -->
+        </div>
+        <hr class="border-dark">
+      {% endfor %}
+    </div>
+  </div>
+</div> 
+
+<div class="container">
+  <div class="row">
+    {% for team in algo_teams %}
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          <div class="card-header">
+            Team {{ forloop.counter }}
+          </div>
+          <div class="card-body">
+            {% for player in team %}
+              <p class="card-text">{{ player.name }} - {{ player.points }}</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 </div>
+
+
+
+
+
+<script>
+  // Initially hide players beyond index 1 in each row
+  document.querySelectorAll('.player-row').forEach(function(row) {
+    var players = row.querySelectorAll('.player');
+    players.forEach(function(player, index) {
+      if (index >= 2) {
+        player.style.display = "none";
+      }
+    });
+  });
+  // Function to handle Show More button click
+  function showMore(players) {
+    players.forEach(function(player, index) {
+      player.style.display = "block";
+    });
+  }
+
+  // Function to handle Show Less button click
+  function showLess(players) {
+    players.forEach(function(player, index) {
+      if (index >= 2) { // Hide players starting from index 2
+        player.style.display = "none";
+      }
+    });
+  }
+
+  // Attach event listeners to Show More and Show Less buttons
+  document.querySelectorAll('.show-more-btn').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var players = this.parentElement.querySelectorAll('.player');
+      showMore(players);
+    });
+  });
+
+  document.querySelectorAll('.show-less-btn').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var players = this.parentElement.querySelectorAll('.player');
+      showLess(players);
+    });
+  });
+</script>
+
+
 
 
 </body>

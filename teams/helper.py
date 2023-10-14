@@ -1,4 +1,6 @@
-from itertools import combinations
+
+
+from itertools import combinations, product
 import pandas as pd
 
 
@@ -11,19 +13,47 @@ def pair_numbers(numbers):
   return pairs
 
 
-def combinations_creator(team):
+def combinations_creator(team,finalteams):
+    print(finalteams[0])
+    team_list = list(team.all())
+    print('------------------------------------------')
+    for player in finalteams[0]:
+       print(player)
+    print('------------------------------------------')
+    print(type(team))
+    print('------------------------------------------')
     names=[]
     all_teams=[]
     for item in team:
       names.append(item)
     pairs = pair_numbers(names)
+    print(pairs[0])
+    print('------------------------------------------')
+    print(type(pairs))
+    print('------------------------------------------')
     for pair in pairs:
-      for player in team:
-        if player not in pair:
-          pair=list(pair)
-          pair.append(player)
+      for teams in finalteams:
+        pair_set = set(pair)
+        team_set=set(teams)
+        if pair_set.issubset(team_set): 
+          for player in teams: 
+            if player not in pair:
+                pair=list(pair)
+                pair.append(player)
+        break
       all_teams.append(pair)
     return all_teams 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -68,7 +98,7 @@ def randomness_calc(unique_teams,df):
                 final_teams.append(team)
                 for player in team:
                     df.loc[player.Index,"no_team"] -=1 
-    print(final_teams)
+    # print(final_teams)
     return final_teams
 
 def fixed_structure(df):
@@ -97,7 +127,8 @@ def fixed_structure(df):
             if 90<= team_points <= max_total_points and len(valid_team) == 11:
                 unique_teams.add(tuple(sorted(valid_team, key=lambda x: x.name)))
     print("Number of teams: ",len(unique_teams)) 
-    randomness_calc(unique_teams,df)
+    final = randomness_calc(unique_teams,df)
+    return final
 
 
    
@@ -112,4 +143,82 @@ def create_df(team1,team2):
 
     df = pd.DataFrame(player_data)
     print(df)
-    fixed_structure(df)
+    #f=fixed_structure(df)
+    #print(df)
+    return df
+
+def input_players(df,bat,bowl,wk,alrou):
+    max_total_points = 100
+    max_players_per_position = {
+        "Batsman": bat,
+        "Bowler": bowl,
+        "WicketKeeper": wk,
+        "AllRounder": alrou
+    }
+
+# Generate unique teams
+    unique_teams = set()
+    for r in range(11, len(df) + 1):
+        for team_combination in combinations(df.itertuples(), r):
+            team_points = 0
+            team_positions_count = {"Batsman": 0, "Bowler": 0, "WicketKeeper": 0, "AllRounder": 0}
+            valid_team = []
+            for player in team_combination:
+                if team_positions_count[player.position] < max_players_per_position[player.position]:
+                    valid_team.append(player)
+                    team_points += player.points
+                    #df['Number_Teams'][player.Index]=df['Number_Teams'][player.Index]+1
+                    #print(row_id)
+                    team_positions_count[player.position] += 1
+            if 90<= team_points <= max_total_points and len(valid_team) == 11:
+                unique_teams.add(tuple(sorted(valid_team, key=lambda x: x.name)))
+    print("Number of teams: ",len(unique_teams)) 
+    final_input = randomness_calc(unique_teams,df)
+    return final_input   
+
+
+def unfixed_structure(df):
+    max_total_points = 100
+    total_players = 11
+    unique_teams = set()
+    for num_batsmen, num_bowlers, num_wk, num_allrounders in product(range(1, total_players - 2),
+                                                                  range(1, total_players - 1),
+                                                                  range(1, total_players),
+                                                                  range(1, total_players - 2)):
+       if num_batsmen + num_bowlers + num_wk + num_allrounders == total_players:
+          max_players_per_position = {
+            "Batsman": num_batsmen,
+            "Bowler": num_bowlers,
+            "WicketKeeper": num_wk,
+            "AllRounder": num_allrounders
+        }
+          for team_combination in combinations(df.itertuples(), total_players):
+            team_points = 0
+            team_positions_count = {"Batsman": 0, "Bowler": 0, "WicketKeeper": 0, "AllRounder": 0}
+            valid_team = []
+            for player in team_combination:
+                if team_positions_count[player.position] < max_players_per_position[player.position]:
+                    valid_team.append(player)
+                    team_points += player.points
+                    team_positions_count[player.position] += 1
+            if 90 <= team_points <= max_total_points and len(valid_team) == total_players:
+                unique_teams.add(tuple(sorted(valid_team, key=lambda x: x.name)))
+    print("Number of teams: ", len(unique_teams))
+    final = randomness_calc(unique_teams,df)
+    return final 
+
+   
+
+
+def create_df_input(team1,team2,bat,bowl,wk,alrou):
+    player_data=[]
+    for player in team1: 
+       player_data.append(vars(player))
+    for player in team2:
+       player_data.append(vars(player))
+
+    df = pd.DataFrame(player_data)
+    print(df)
+    f_final_input=input_players(df,bat,bowl,wk,alrou)
+    print(df)
+    return f_final_input

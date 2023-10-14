@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<body>
+<h1>
+Update Page 
+</h1>
+<p> 
+{% for player in players %}
+    <li>{{player.name}}</li> 
+{% endfor %}
+</p>
+<form method="POST" >
+{% csrf_token %}
+{{ teamform.as_p }}
+</form>
+</body>
+</html>
