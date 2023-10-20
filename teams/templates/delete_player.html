@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<body>
+<h1>
+Delete Page 
+</h1>
+<p>
+Are you sure you want to delete {{ player.name }} from this {{ team.name }} ? 
+</p>
+<form method="POST">
+    {% csrf_token %}
+    <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="option" id="yes" value="yes">
+  <label class="form-check-label" for="yes">Yes</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="option" id="no" value="no">
+  <label class="form-check-label" for="no">No</label>
+</div>
+<a href="{% url 'update' team.id %}" class="btn btn-primary btn-sm">Submit</a>  
+</form>
+</body>
+</html>

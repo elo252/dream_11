@@ -3,14 +3,17 @@
 <h1>
 Update Page 
 </h1>
-<p> 
 {% for player in players %}
-    <li>{{player.name}}</li> 
+    <span>{{ player.name }}</span>
+  <a href="{% url 'update_player' player.id team.id %}" class="btn btn-primary btn-sm">Update</a>
+  <a href="{% url 'delete_player' player.id team.id %}" class="btn btn-danger btn-sm">Delete</a>
+  <br />
 {% endfor %}
-</p>
 <form method="POST" >
 {% csrf_token %}
-{{ teamform.as_p }}
+<a href="{% url 'create_player' %}">Create Player <img src="https://cdn-icons-png.flaticon.com/512/1634/1634635.png" width="20" height="20" alt="Add Player"></a>
+<input type="text" name="name" id="name" placeholder="{{ team.name }}" />
+<button type="submit" class="btn btn-primary">Submit</button>
 </form>
 </body>
 </html>

@@ -13,5 +13,7 @@ urlpatterns = [
     path('match/',matchday, name='match'),
     path('matchday_input/',matchday_Input, name='matchday_input'),
     path('unfixed/',unfixed,name="unfixed"),
-    path('updateteam/<int:pk>',udpate_team,name="update")
+    path('updateteam/<int:pk>',udpate_team,name="update"),
+    path('updateplayer/<int:pk>/<team_id>/',upd_player,name="update_player"),
+    path('deleteplayer/<int:pk>/<team_id>/',del_player,name="delete_player"),
 ]

@@ -13,14 +13,42 @@ from .helper import combinations_creator,create_df, input_players,create_df_inpu
 
 # Create your views here.
 def home(request):
-
-
     return render(request, "index.html",)
+
+def upd_player(request,pk , team_id):
+    player = Player.objects.get(id=pk)
+    form = PlayerForm(instance=player)
+    team = Team.objects.get(id=team_id)
+    if request.method == 'POST':
+        form = PlayerForm(request.POST, instance=player)
+        if form.is_valid():
+            form.save()
+    context = {"form":form , "team":team}
+    return render(request ,"update_player.html",context)
+
+def del_player(request,pk, team_id):
+    player = Player.objects.get(id=pk)
+    team = Team.objects.get(id =team_id)
+    context= {"player":player,"team":team}
+    if request.method == "POST":
+        option = request.POST.get('option') 
+        if option == "yes": 
+            if team in player.teams.all():
+                player.teams.remove(team)
+                player.save()
+                team.players.remove(player)
+                team.save()
+    return render(request ,"delete_player.html",context)
 
 def delete_players(request,id):
     queryset= Player.objects.get(id=id)
     queryset.delete()
     return redirect('teams')
+
+def delete_player(request,pk):
+    print(pk)
+    return HttpResponse("Hi")
+    return render(request , "delete_player.html",)
 
 
 
@@ -95,8 +123,19 @@ def udpate_team(request,pk):
     team = Team.objects.get(id=pk)
     players = team.players.all()
     teamform = TeamForm(instance = team)
-    context = {"teamform":teamform, "players":players }
+    if request.method == "POST":
+        if request.POST.get('name'):
+            team.name = request.POST.get('name')
+            team.save()
+
+    context = {"teamform":teamform, "players":players, "team":team }
     return render(request , "update.html" ,context)
+
+def update_player(request,pk):
+    pass 
+
+def delete_player(request,pk):
+    pass 
 
 
 
