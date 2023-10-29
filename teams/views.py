@@ -31,8 +31,11 @@ def del_player(request,pk, team_id):
     team = Team.objects.get(id =team_id)
     context= {"player":player,"team":team}
     if request.method == "POST":
+        print("hi")
         option = request.POST.get('option') 
+        print(option)
         if option == "yes": 
+            print("Hi")
             if team in player.teams.all():
                 player.teams.remove(team)
                 player.save()
@@ -45,10 +48,25 @@ def delete_players(request,id):
     queryset.delete()
     return redirect('teams')
 
-def delete_player(request,pk):
-    print(pk)
-    return HttpResponse("Hi")
-    return render(request , "delete_player.html",)
+def add_player_team(request,id):
+    team = Team.objects.get(id=id)
+    players = Player.objects.all()
+    final_players= []
+    print(type(players))
+    team_players = team.players.all()
+    for play in players:
+        if play not in team_players:
+            final_players.append(play)
+    context={"players":final_players ,"team":team}
+    if request.method =="POST":
+        option = request.POST.get('option') 
+        player =Player.objects.get(id=int(option))
+        player.teams.add(team)
+        player.save()
+        team.players.add(player)
+        team.save()
+    return render(request , "add_player_team.html", context)
+
 
 
 
